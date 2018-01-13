@@ -76,6 +76,10 @@ class Vector(object):
     def is_zero(self, tolerance=1e-10):
         return self.magnitude() < tolerance
 
+    def get_proj_b(self,b):
+        b_normaalized=b.normalized()
+        return b_normaalized.times_scaler(self.dot(b_normaalized))
+
     def __str__(self):
         return 'Vector: {}'.format([round(x,3) for x in self.coordinates])
 
@@ -83,31 +87,18 @@ class Vector(object):
         return self.coordinates == v.coordinates
 
 
-v1 = Vector([-7.579, -7.88])
-w1 = Vector([22.737, 23.64])
+v1 = Vector([3.039, 1.879])
+w1 = Vector([0.825, 2.036])
 
-v2 = Vector([-2.029, 9.97, 4.172])
-w2 = Vector([-9.231, -6.639, -7.245])
+v2 = Vector([-9.88, -3.264, -8.159])
+w2 = Vector([-2.155, -9.353, -9.473])
 
-v3 = Vector([-2.328, -7.284, -1.214])
-w3 = Vector([-1.821, 1.072, -2.94])
+v3 = Vector([3.009, -6.172, 3.692,-2.51])
+w3 = Vector([6.404,-9.144,2.759,8.718])
 
-v4 = Vector([2.118, 4.827])
-w4 = Vector([0, 0])
+print v1.get_proj_b(w1)
 
+print v2.minus(v2.get_proj_b(w2))
 
-print v1.is_parallel_to(w1)
-
-print v2.is_parallel_to(w2)
-print v3.is_parallel_to(w3)
-print v4.is_parallel_to(w4)
-
-print "========="
-
-print v1.is_orthogonal_to(w1)
-
-print v2.is_orthogonal_to(w2)
-
-print v3.is_orthogonal_to(w3)
-
-print v4.is_orthogonal_to(w4)
+print v3.get_proj_b(w3)
+print v3.minus(v3.get_proj_b(w3))
