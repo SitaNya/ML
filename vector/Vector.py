@@ -6,6 +6,8 @@ getcontext().prec = 30
 
 class Vector(object):
     CANNOT_NORMALIZE_ZERO_VECTOR_MSG = 'Cannot normalize the zero vector'
+    NO_UNIQUE_PARALLEL_COMPONENT_MSG = 'Zero vector NO UNIQUE PARALLEL COMPONENT'
+    ONLY_DEFINED_IN_TOW_THREE_DIMS_MSG = 'ONLY_DEFINED_IN_TOW_THREE_DIMS_MSG'
 
     def __init__(self, coordinates):
         try:
@@ -76,29 +78,74 @@ class Vector(object):
     def is_zero(self, tolerance=1e-10):
         return self.magnitude() < tolerance
 
-    def get_proj_b(self,b):
-        b_normaalized=b.normalized()
-        return b_normaalized.times_scaler(self.dot(b_normaalized))
+    def component_parallel_to(self, basis):
+        try:
+            u = basis.normalized()
+            weight = self.dot(u)
+            return u.times_scaler(weight)
+        except Exception as e:
+            if str(e) == self.CANNOT_NORMALIZE_ZERO_VECTOR_MSG:
+                raise Exception(self.NO_UNIQUE_PARALLEL_COMPONENT_MSG)
+            else:
+                raise e
+
+    def component_orthogonal_to(self, basis):
+        try:
+            projection = self.component_orthogonal_to(basis)
+            return self.minus(projection)
+        except Exception as e:
+            if str(e) == self.CANNOT_NORMALIZE_ZERO_VECTOR_MSG:
+                raise Exception(self.NO_UNIQUE_PARALLEL_COMPONENT_MSG)
+            else:
+                raise e
+
+    def cross(self, v):
+        try:
+            x_1, y_1, z_1 = self.coordinates
+            x_2, y_2, z_2 = v.coordinates
+            new_coordinates = Vector([y_1 * z_2 - y_2 * z_1,
+                               -(x_1 * z_2 - x_2 * z_1),
+                               x_1 * y_2 - x_2 * y_1])
+            return new_coordinates
+        except Exception as e:
+            msg = str(e)
+            if msg == 'need more than 2 values to unpack':
+                slef_embedded_in_R3 = Vector(self.coordinates + ('0',))
+                v_embedded_in_R3 = Vector(v.coordinates + ('0',))
+                return slef_embedded_in_R3.cross(v_embedded_in_R3)
+            elif (msg == 'too many values to unpack' or
+                          msg == 'need more than 1 value to unpack'):
+                raise Exception(self.ONLY_DEFINED_IN_TOW_THREE_DIMS_MSG)
+            else:
+                raise e
+
+    def area_of_parallelogram_with(self, v):
+        cross_product = self.cross(v)
+        return round(cross_product.magnitude(),3)
+
+    def area_of_triangle_with(self, v):
+        cross = self.cross(v)
+        return round(Decimal(cross.magnitude())/Decimal('2.0'),3)
+
 
     def __str__(self):
-        return 'Vector: {}'.format([round(x,3) for x in self.coordinates])
+        return 'Vector: {}'.format([round(x, 3) for x in self.coordinates])
 
     def __eq__(self, v):
         return self.coordinates == v.coordinates
 
 
-v1 = Vector([3.039, 1.879])
-w1 = Vector([0.825, 2.036])
+v1 = Vector([8.462, 7.893, -8.187])
+w1 = Vector([6.984, -5.975, 4.778])
 
-v2 = Vector([-9.88, -3.264, -8.159])
-w2 = Vector([-2.155, -9.353, -9.473])
+v2 = Vector([-8.987, -9.838, 5.031])
+w2 = Vector([-4.268, -1.861, -8.866])
 
-v3 = Vector([3.009, -6.172, 3.692,-2.51])
-w3 = Vector([6.404,-9.144,2.759,8.718])
+v3 = Vector([1.5, 9.547, 3.691])
+w3 = Vector([-6.007, 0.124, 5.772])
 
-print v1.get_proj_b(w1)
+print v1.cross(w1)
 
-print v2.minus(v2.get_proj_b(w2))
+print v2.area_of_parallelogram_with(w2)
 
-print v3.get_proj_b(w3)
-print v3.minus(v3.get_proj_b(w3))
+print v3.area_of_triangle_with(w3)
