@@ -77,7 +77,7 @@ class Vector(object):
         return self.magnitude() < tolerance
 
     def __str__(self):
-        return 'Vector: {}'.format(self.coordinates)
+        return 'Vector: {}'.format([round(x,3) for x in self.coordinates])
 
     def __eq__(self, v):
         return self.coordinates == v.coordinates
