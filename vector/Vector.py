@@ -69,7 +69,6 @@ class Vector(object):
         return abs(self.dot(v)) < tolerance
 
     def is_parallel_to(self, v):
-        print self.dot(v)
         return (self.is_zero() or
                 v.is_zero() or
                 self.angle_with(v) == 0 or
@@ -143,9 +142,9 @@ w2 = Vector([-4.268, -1.861, -8.866])
 
 v3 = Vector([1.5, 9.547, 3.691])
 w3 = Vector([-6.007, 0.124, 5.772])
-
-print v1.cross(w1)
-
-print v2.area_of_parallelogram_with(w2)
-
-print v3.area_of_triangle_with(w3)
+#
+# print v1.cross(w1)
+#
+# print v2.area_of_parallelogram_with(w2)
+#
+# print v3.area_of_triangle_with(w3)
