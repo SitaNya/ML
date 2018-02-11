@@ -133,6 +133,9 @@ class Vector(object):
     def __eq__(self, v):
         return self.coordinates == v.coordinates
 
+    def __getitem__(self,index):
+        return Decimal(self.coordinates[index])
+
 
 # v1 = Vector([8.462, 7.893, -8.187])
 # w1 = Vector([6.984, -5.975, 4.778])

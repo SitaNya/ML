@@ -69,17 +69,17 @@ class Plane(object):
 
         n = self.normal_vector
 
-        try:
-            initial_index = Plane.first_nonzero_index(n)
-            terms = [write_coefficient(n[i], is_initial_term=(i == initial_index)) + 'x_{}'.format(i + 1)
-                     for i in range(self.dimension) if round(n[i], num_decimal_places) != 0]
-            output = ' '.join(terms)
+        # try:
+        initial_index = Plane.first_nonzero_index(n)
+        terms = [write_coefficient(n[i], is_initial_term=(i == initial_index)) + 'x_{}'.format(i + 1)
+                 for i in range(self.dimension) if round(n[i], num_decimal_places) != 0]
+        output = ' '.join(terms)
 
-        except Exception as e:
-            if str(e) == self.NO_NONZERO_ELTS_FOUND_MSG:
-                output = '0'
-            else:
-                raise e
+        # except Exception as e:
+        #     if str(e) == self.NO_NONZERO_ELTS_FOUND_MSG:
+        #         output = '0'
+        #     else:
+        #         raise e
 
         constant = round(self.constant_term, num_decimal_places)
         if constant % 1 == 0:
@@ -135,24 +135,24 @@ class MyDecimal(Decimal):
         return abs(self) < eps
 
 
-v1 = Plane(normal_vector=Vector([-0.412, 3.806, 0.728]), constant_term=-3.46)
-w1 = Plane(normal_vector=Vector([1.03, -9.515, -1.82]), constant_term=8.65)
-
-v2 = Plane(normal_vector=Vector([2.611, 5.528, 0.283]), constant_term=4.6)
-w2 = Plane(normal_vector=Vector([7.715, 8.036, 5.342]), constant_term=3.76)
-
-v3 = Plane(normal_vector=Vector([-7.926, 8.625, -7.212]), constant_term=-7.952)
-w3 = Plane(normal_vector=Vector([-2.642, 2.875, -2.404]), constant_term=-2.443)
-
-print v1.is_parallel_to(w1)
-print v1 == w1
-
-print "============="
-
-print v2.is_parallel_to(w2)
-print v2 == w2
-
-print "============="
-
-print v3.is_parallel_to(w3)
-print v3 == w3
+# v1 = Plane(normal_vector=Vector([-0.412, 3.806, 0.728]), constant_term=-3.46)
+# w1 = Plane(normal_vector=Vector([1.03, -9.515, -1.82]), constant_term=8.65)
+#
+# v2 = Plane(normal_vector=Vector([2.611, 5.528, 0.283]), constant_term=4.6)
+# w2 = Plane(normal_vector=Vector([7.715, 8.036, 5.342]), constant_term=3.76)
+#
+# v3 = Plane(normal_vector=Vector([-7.926, 8.625, -7.212]), constant_term=-7.952)
+# w3 = Plane(normal_vector=Vector([-2.642, 2.875, -2.404]), constant_term=-2.443)
+#
+# print v1.is_parallel_to(w1)
+# print v1 == w1
+#
+# print "============="
+#
+# print v2.is_parallel_to(w2)
+# print v2 == w2
+#
+# print "============="
+#
+# print v3.is_parallel_to(w3)
+# print v3 == w3
