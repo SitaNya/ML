@@ -1,3 +1,4 @@
+# coding=utf-8
 from math import sqrt, pi, acos
 from decimal import Decimal, getcontext
 
@@ -15,6 +16,7 @@ class Vector(object):
                 raise ValueError
             self.coordinates = tuple(Decimal(x) for x in coordinates)
             self.dimension = len(coordinates)
+            self.idx = 0
 
         except ValueError:
             raise ValueError('The coordinates must be nonempty')
@@ -103,8 +105,8 @@ class Vector(object):
             x_1, y_1, z_1 = self.coordinates
             x_2, y_2, z_2 = v.coordinates
             new_coordinates = Vector([y_1 * z_2 - y_2 * z_1,
-                               -(x_1 * z_2 - x_2 * z_1),
-                               x_1 * y_2 - x_2 * y_1])
+                                      -(x_1 * z_2 - x_2 * z_1),
+                                      x_1 * y_2 - x_2 * y_1])
             return new_coordinates
         except Exception as e:
             msg = str(e)
@@ -120,22 +122,33 @@ class Vector(object):
 
     def area_of_parallelogram_with(self, v):
         cross_product = self.cross(v)
-        return round(cross_product.magnitude(),3)
+        return round(cross_product.magnitude(), 3)
 
     def area_of_triangle_with(self, v):
         cross = self.cross(v)
-        return round(Decimal(cross.magnitude())/Decimal('2.0'),3)
-
+        return round(Decimal(cross.magnitude()) / Decimal('2.0'), 3)
 
     def __str__(self):
-        return 'Vector: {}'.format([round(x, 3) for x in self.coordinates])
+        return 'Vector: {}'.format(self.coordinates)
 
     def __eq__(self, v):
         return self.coordinates == v.coordinates
 
-    def __getitem__(self,index):
+    def __getitem__(self, index):
         return Decimal(self.coordinates[index])
 
+    # 这里感谢mentor帮助，我先前发现重复运行代码存在不同的回显百思不得其解，询问后才了解到这里的基础代码应补充一行idx=0
+    def __iter__(self):
+        self.idx = 0
+        return self
+
+    def next(self):
+        self.idx += 1
+        try:
+            return Decimal(self.coordinates[self.idx - 1])
+        except IndexError:
+            self.idx = 0
+            raise StopIteration  # Done iterating.
 
 # v1 = Vector([8.462, 7.893, -8.187])
 # w1 = Vector([6.984, -5.975, 4.778])
