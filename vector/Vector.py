@@ -1,4 +1,6 @@
 # coding=utf-8
+import traceback
+# 没有程序员会介意错误更详细一些
 from math import sqrt, pi, acos
 from decimal import Decimal, getcontext
 
@@ -88,7 +90,7 @@ class Vector(object):
             if str(e) == self.CANNOT_NORMALIZE_ZERO_VECTOR_MSG:
                 raise Exception(self.NO_UNIQUE_PARALLEL_COMPONENT_MSG)
             else:
-                raise e
+                raise 'traceback.format_exc():\n%s' % traceback.format_exc()
 
     def component_orthogonal_to(self, basis):
         try:
@@ -98,7 +100,7 @@ class Vector(object):
             if str(e) == self.CANNOT_NORMALIZE_ZERO_VECTOR_MSG:
                 raise Exception(self.NO_UNIQUE_PARALLEL_COMPONENT_MSG)
             else:
-                raise e
+                raise 'traceback.format_exc():\n%s' % traceback.format_exc()
 
     def cross(self, v):
         try:
@@ -118,7 +120,7 @@ class Vector(object):
                           msg == 'need more than 1 value to unpack'):
                 raise Exception(self.ONLY_DEFINED_IN_TOW_THREE_DIMS_MSG)
             else:
-                raise e
+                raise 'traceback.format_exc():\n%s' % traceback.format_exc()
 
     def area_of_parallelogram_with(self, v):
         cross_product = self.cross(v)

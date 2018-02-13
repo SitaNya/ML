@@ -1,5 +1,6 @@
+# coding=utf-8
 from decimal import Decimal, getcontext
-
+import traceback
 from Vector import Vector
 
 getcontext().prec = 30
@@ -7,6 +8,7 @@ getcontext().prec = 30
 
 class Plane(object):
     NO_NONZERO_ELTS_FOUND_MSG = 'No nonzero elements found'
+    NO_NONZERO_TO_EQ = '\'NoneType\' object has no attribute \'minus\''
 
     def __init__(self, normal_vector=None, constant_term=None):
         self.dimension = 3
@@ -23,16 +25,14 @@ class Plane(object):
         self.set_basepoint()
 
     def set_basepoint(self):
+        global basepoint_coords
         try:
             n = self.normal_vector
             c = self.constant_term
             basepoint_coords = ['0'] * self.dimension
 
             initial_index = Plane.first_nonzero_index(n)
-            list = []
-            for x in n.coordinates:
-                list.append(x)
-            initial_coefficient = list[initial_index]
+            initial_coefficient = n[initial_index]
 
             basepoint_coords[initial_index] = c / initial_coefficient
             self.basepoint = Vector(basepoint_coords)
@@ -41,7 +41,7 @@ class Plane(object):
             if str(e) == Plane.NO_NONZERO_ELTS_FOUND_MSG:
                 self.basepoint = None
             else:
-                raise e
+                raise 'traceback.format_exc():\n%s' % traceback.format_exc()
 
     def __str__(self):
 
@@ -69,17 +69,17 @@ class Plane(object):
 
         n = self.normal_vector
 
-        # try:
-        initial_index = Plane.first_nonzero_index(n)
-        terms = [write_coefficient(n[i], is_initial_term=(i == initial_index)) + 'x_{}'.format(i + 1)
-                 for i in range(self.dimension) if round(n[i], num_decimal_places) != 0]
-        output = ' '.join(terms)
+        try:
+            initial_index = Plane.first_nonzero_index(n)
+            terms = [write_coefficient(n[i], is_initial_term=(i == initial_index)) + 'x_{}'.format(i + 1)
+                     for i in range(self.dimension) if round(n[i], num_decimal_places) != 0]
+            output = ' '.join(terms)
 
-        # except Exception as e:
-        #     if str(e) == self.NO_NONZERO_ELTS_FOUND_MSG:
-        #         output = '0'
-        #     else:
-        #         raise e
+        except Exception as e:
+            if str(e) == self.NO_NONZERO_ELTS_FOUND_MSG:
+                output = '0'
+            else:
+                raise 'traceback.format_exc():\n%s' % traceback.format_exc()
 
         constant = round(self.constant_term, num_decimal_places)
         if constant % 1 == 0:
@@ -89,8 +89,8 @@ class Plane(object):
         return output
 
     @staticmethod
-    def first_nonzero_index(vector):
-        for k, item in enumerate(vector.coordinates):
+    def first_nonzero_index(iterable):
+        for k, item in enumerate(iterable):
             if not MyDecimal(item).is_near_zero():
                 return k
         raise Exception(Plane.NO_NONZERO_ELTS_FOUND_MSG)
@@ -120,14 +120,23 @@ class Plane(object):
                 return None
 
     def __eq__(self, ell):
+        global basepoint_difference, n
         if not self.is_parallel_to(ell):
             return False
         x0 = self.basepoint
         y0 = ell.basepoint
 
-        basepoint_difference = x0.minus(y0)
-        n = self.normal_vector
-        return basepoint_difference.is_orthogonal_to(n)
+        # 这里做了一点小改变。考虑到x0和y0可能为0向量，不能让程序就此终止也不能不报，因此这里判断为0后程序继续，打印一行错误。
+        # 我有些担心如果x0不为0，y0为0后会如何。不过还有一种可能的解决方案是给setbasepoint方法中self.basepoint = None改为
+        # self.basepoint = Vector(basepoint_coords)，这里的basepoint_coords已经被初始化[0,0,0……]而未被赋予别的值
+        try:
+            basepoint_difference = x0.minus(y0)
+            n = self.normal_vector
+            return basepoint_difference.is_orthogonal_to(n)
+        except Exception as e:
+            if str(e) == Plane.NO_NONZERO_TO_EQ:
+                print 'traceback.format_exc():\n%s' % traceback.format_exc()
+                return basepoint_difference.is_orthogonal_to(n)
 
 
 class MyDecimal(Decimal):
