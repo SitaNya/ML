@@ -13,6 +13,10 @@ class Vector(object):
     ONLY_DEFINED_IN_TOW_THREE_DIMS_MSG = 'ONLY_DEFINED_IN_TOW_THREE_DIMS_MSG'
 
     def __init__(self, coordinates):
+        """
+        将向量转换为Decimal（精度更高）类型后存储，并初始化其长度，并初始化其索引，用于后续的取值
+        :param coordinates: 输入坐标系，否则将报错
+        """
         try:
             if not coordinates:
                 raise ValueError
@@ -27,18 +31,36 @@ class Vector(object):
             raise TypeError('The coordinates must be an iterable')
 
     def plus(self, v):
+        """
+        向量相加，每个向量之间相加
+        :rtype: Vector
+        """
         new_coordinates = [x + y for x, y in zip(self.coordinates, v.coordinates)]
         return Vector(new_coordinates)
 
     def minus(self, v):
+        """
+        向量相减，每个向量之间相减
+        :param v:减数 
+        :return: 返回被减后的向量
+        """
         new_coordinates = [x - y for x, y in zip(self.coordinates, v.coordinates)]
         return Vector(new_coordinates)
 
     def times_scaler(self, c):
+        """
+        向量的点乘方法，每个值乘以一个常数，直接代表了将向量延长c倍
+        :param c: 延长c倍
+        :return: 返回被延长后的向量
+        """
         new_coordinates = [Decimal(c) * x for x in self.coordinates]
         return Vector(new_coordinates)
 
     def magnitude(self):
+        """
+        标准化一个向量，需要把每个值的平方相加后再开方，代表
+        :return: 
+        """
         coordinates_squared = [x ** 2 for x in self.coordinates]
         return sqrt(sum(coordinates_squared))
 

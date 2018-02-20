@@ -135,7 +135,7 @@ class Plane(object):
             return basepoint_difference.is_orthogonal_to(n)
         except Exception as e:
             if str(e) == Plane.NO_NONZERO_TO_EQ:
-                print 'traceback.format_exc():\n%s' % traceback.format_exc()
+                print '被除数为0'
                 return basepoint_difference.is_orthogonal_to(n)
 
 
