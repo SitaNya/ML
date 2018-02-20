@@ -139,6 +139,7 @@ class Plane(object):
                 return basepoint_difference.is_orthogonal_to(n)
 
 
+
 class MyDecimal(Decimal):
     def is_near_zero(self, eps=1e-10):
         return abs(self) < eps
